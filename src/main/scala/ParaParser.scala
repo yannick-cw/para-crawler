@@ -6,7 +6,7 @@ import scala.concurrent.duration._
   */
 
 case class User(email: String, lookingFor: List[String])
-case class ParseResult(href: String, id: Int, title: String)
+case class ParseResult(href: String, id: Int, title: String, imgSrc: String)
 case class Result(user: User, parseResults: List[ParseResult])
 
 object ParaParser extends App with Parsing {
@@ -24,17 +24,19 @@ object ParaParser extends App with Parsing {
 
       val msg =
         s"""
-          |Hallo ${res.user.email}
-          |
-          |Es scheint wieder neue Angebote für deine Suche nach: ${res.user.lookingFor.mkString(", ")}
-          |zu geben.
-          |
-          |Check doch mal diese neuen Angebote
-          |
+          |Hallo ${res.user.email}<br>
+          |<br>
+          |Es scheint wieder neue Angebote für deine Suche nach: ${res.user.lookingFor.mkString(", ")}<br>
+          |zu geben. <br>
+          |<br>
+          |Check doch mal diese neuen Angebote<br>
+          |<br>
           |${res.parseResults.map( result =>
-            s"""Titel: ${result.title}
-               |Link: ${result.href}
-             """.stripMargin).mkString("\n \n")}
+            s"""Titel: ${result.title}<br>
+               |Link: ${result.href}<br>
+               |<br>
+               |<img src="${result.imgSrc}" alt="img"/><br>
+             """.stripMargin).mkString("<br> <br>")}
         """.stripMargin
       sendMail(msg, res.user.email)
     }
@@ -48,7 +50,8 @@ object ParaParser extends App with Parsing {
       from = ("yannick.gladow@gmail.com", "Yannick"),
       to = to,
       subject = "Neues Angebot gefunden",
-      message = msg
+      message = "Hallo ",
+      richMessage = Some(msg)
     )
   }
 }

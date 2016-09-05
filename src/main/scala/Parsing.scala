@@ -10,17 +10,21 @@ trait Parsing {
 
   def giveMeNewResults(users: List[User])(latestId: Int): (List[Result], Int) = {
     val browser = JsoupBrowser()
-    val doc = browser.get("http://www.dhv.de/db3/gebrauchtmarkt/anzeigen?suchbegriff=&rubrik=0&hersteller=&muster=&preismin=&preismax=&anbietertyp=0&land=0&plz=&itemsperpage=100&order=1")
+    val doc = browser.get("http://www.dhv.de/db3/gebrauchtmarkt/anzeigen?suchbegriff=&rubrik=0&hersteller=&muster=&preismin=&preismax=&anbietertyp=0&land=0&plz=&itemsperpage=1000&order=1")
     val items: List[ParseResult] =
-      (doc >> elementList(".gm_offer_description"))
+      (doc >> elementList(".gm_offer"))
         .map { ele =>
-          val details = ele >> element(".dtl")
+          val subEle = ele >> element(".gm_offer_description")
+          val image = ele >> element(".gm_offer_image")
+          val imgSrc = image.children.head.children.head.attr("src")
+          val details = subEle >> element(".dtl")
           val href = details.attr("href")
-          val title = ele >> text("h2")
+          val title = subEle >> text("h2")
           ParseResult(
             href = "http://www.dhv.de" + href,
             id = href.split("/").last.toInt,
-            title = title
+            title = title,
+            imgSrc = "http://www.dhv.de" + imgSrc
           )
         }
       .filter(_.id > latestId)
