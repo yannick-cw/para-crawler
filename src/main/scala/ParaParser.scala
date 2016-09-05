@@ -15,7 +15,7 @@ object ParaParser extends App with Parsing {
   val users = List(User("yannick.gladow@gmail.com", List(
     "woody", "wood", "valley", "wani", "bright", "gradient"
   )))
-  var currentId = 0
+  var currentId = 46445
 
   import system.dispatcher
   system.scheduler.schedule(1 second, 1 hour) {

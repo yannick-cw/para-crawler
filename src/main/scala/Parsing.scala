@@ -27,7 +27,7 @@ trait Parsing {
             imgSrc = "http://www.dhv.de" + imgSrc
           )
         }
-      .filter(_.id > latestId)
+        .filter(_.id > latestId)
 
     val newestId = items.headOption.map(_.id).getOrElse(latestId)
 
@@ -40,8 +40,8 @@ trait Parsing {
 
     (matches
       .groupBy(_.user)
-      .map { case (user, results) => Result(user, results.flatMap(_.parseResults))}
-      .toList,
+      .map { case (user, results) => Result(user, results.flatMap(_.parseResults)) }
+      .toSet.toList,
       newestId)
   }
 }
