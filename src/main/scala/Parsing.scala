@@ -40,8 +40,8 @@ trait Parsing {
 
     (matches
       .groupBy(_.user)
-      .map { case (user, results) => Result(user, results.flatMap(_.parseResults)) }
-      .toSet.toList,
+      .map { case (user, results) => Result(user, results.flatMap(_.parseResults).distinct) }
+      .toList,
       newestId)
   }
 }
