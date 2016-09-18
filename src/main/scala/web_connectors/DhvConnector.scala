@@ -1,15 +1,18 @@
-import net.ruippeixotog.scalascraper.dsl.DSL._
-import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
+package web_connectors
+
+import models.ParseResult
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
+import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
+import net.ruippeixotog.scalascraper.dsl.DSL._
 
 /**
   * Created by 437580 on 05/09/16.
   */
+case class DhvConnector(baseId: Int) extends Connector {
 
-trait Parsing {
+  val browser = JsoupBrowser()
 
-  def giveMeNewResults(users: List[User])(latestId: Int): (List[Result], Int) = {
-    val browser = JsoupBrowser()
+  def newResults: (List[ParseResult], DhvConnector) = {
     val doc = browser.get("http://www.dhv.de/db3/gebrauchtmarkt/anzeigen?suchbegriff=&rubrik=0&hersteller=&muster=&preismin=&preismax=&anbietertyp=0&land=0&plz=&itemsperpage=1000&order=1")
     val items: List[ParseResult] =
       (doc >> elementList(".gm_offer"))
@@ -27,21 +30,8 @@ trait Parsing {
             imgSrc = "http://www.dhv.de" + imgSrc
           )
         }
-        .filter(_.id > latestId)
+        .filter(_.id > baseId)
 
-    val newestId = items.headOption.map(_.id).getOrElse(latestId)
-
-    val matches = for {
-      user <- users
-      lookingFor <- user.lookingFor
-      item <- items
-      if item.title.toLowerCase contains lookingFor
-    } yield Result(user, List(item))
-
-    (matches
-      .groupBy(_.user)
-      .map { case (user, results) => Result(user, results.flatMap(_.parseResults).distinct) }
-      .toList,
-      newestId)
+    (items.distinct, DhvConnector(items.headOption.map(_.id).getOrElse(baseId)))
   }
 }
