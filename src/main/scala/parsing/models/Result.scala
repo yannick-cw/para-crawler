@@ -1,4 +1,4 @@
-package models
+package parsing.models
 
 /**
   * Created by Yannick on 18.09.16.

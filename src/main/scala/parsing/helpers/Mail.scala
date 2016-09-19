@@ -1,4 +1,4 @@
-package helpers
+package parsing.helpers
 
 case class Mail(from: String,
                 to: String,

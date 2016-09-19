@@ -1,6 +1,6 @@
-package web_connectors
+package parsing.web_connectors
 
-import models.ParseResult
+import parsing.models.ParseResult
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
 import net.ruippeixotog.scalascraper.dsl.DSL._

@@ -1,6 +1,6 @@
-package web_connectors
+package parsing.web_connectors
 
-import models.ParseResult
+import parsing.models.ParseResult
 
 /**
   * Created by Yannick on 18.09.16.

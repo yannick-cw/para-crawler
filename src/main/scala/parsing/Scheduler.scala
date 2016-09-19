@@ -1,3 +1,5 @@
+package parsing
+
 import akka.actor.ActorSystem
 import helpers.ParaMail
 import helpers.ParseResultsOps.ParseResultsImproved
@@ -6,19 +8,20 @@ import web_connectors.{Connector, DhvConnector}
 
 import scala.concurrent.duration._
 
-object ParaParser extends App {
-
-  val system = ActorSystem()
-  val users = List(User("yannick.gladow@gmail.com", List("woody", "wood", "valley", "wani", "bright", "denali")),
-    User("antonia.kahlert@gmail.com", List("woody", "wood", "valley", "wani", "prion", "koyote", "koyot")))
+trait Scheduler extends ParaParser {
+  val system: ActorSystem
+  var users = Map.empty[String, User]
 
   var connectors: List[Connector] = List(DhvConnector(baseId = 46445))
   import system.dispatcher
 
-  system.scheduler.schedule(1 second, 1 hour) {
+  def updateUser(user: User): Unit =
+    users = users.updated(user.email, user)
+
+  def startScheduler(): Unit = system.scheduler.schedule(1 second, 10 seconds) {
     connectors = connectors.map { connector =>
       val (parseResults, newConnector) = connector.newResults
-      parseResults.toResult(users)
+      parseResults.toResult(users.values.toList)
         .foreach(ParaMail.sendMail)
       newConnector
     }

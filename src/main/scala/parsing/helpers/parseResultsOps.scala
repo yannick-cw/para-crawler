@@ -1,6 +1,6 @@
-package helpers
+package parsing.helpers
 
-import models.{ParseResult, Result, User}
+import parsing.models.{ParseResult, Result, User}
 
 /**
   * Created by Yannick on 18.09.16.
