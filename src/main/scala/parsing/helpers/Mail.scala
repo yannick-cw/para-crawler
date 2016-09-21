@@ -5,7 +5,7 @@ case class Mail(from: String,
                 subject: String,
                 message: String,
                 richMessage: String) {
-  def send: String = {
+  def send(mail: String, pwd: String): String = {
     import org.apache.commons.mail._
 
     val commonsMail: Email = new HtmlEmail().setHtmlMsg(richMessage).setTextMsg(message)
@@ -17,7 +17,7 @@ case class Mail(from: String,
       .setSubject(subject)
     email.setHostName("smtp.googlemail.com")
     email.setSmtpPort(465)
-    email.setAuthenticator(new DefaultAuthenticator(sys.env("EMAIL"), sys.env("EMAIL_PWD")))
+    email.setAuthenticator(new DefaultAuthenticator(mail, pwd))
     email.setSSLOnConnect(true)
     email.send
   }

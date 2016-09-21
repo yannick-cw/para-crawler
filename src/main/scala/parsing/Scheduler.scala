@@ -11,6 +11,7 @@ import scala.concurrent.duration._
 trait Scheduler extends ParaParser {
   val system: ActorSystem
   var users = Map.empty[String, User]
+  lazy val conf = system.settings.config
 
   var connectors: List[Connector] = List(DhvConnector(baseId = 46445))
   import system.dispatcher
@@ -18,11 +19,11 @@ trait Scheduler extends ParaParser {
   def updateUser(user: User): Unit =
     users = users.updated(user.email, user)
 
-  def startScheduler(): Unit = system.scheduler.schedule(1 second, 10 seconds) {
+  def startScheduler(): Unit = system.scheduler.schedule(10 second, 10 minutes) {
     connectors = connectors.map { connector =>
       val (parseResults, newConnector) = connector.newResults
       parseResults.toResult(users.values.toList)
-        .foreach(ParaMail.sendMail)
+        .foreach(ParaMail.sendMail(_, conf.getString("email.mail"), conf.getString("email.pwd")))
       newConnector
     }
   }

@@ -15,6 +15,6 @@ object Server extends App { self =>
   val registrationRoute = new RegistrationRoute {
     override val paraParser: ParaParser = self.paraParser
   }
-  Http().bindAndHandle(registrationRoute.route, "localhost", 8080)
+  Http().bindAndHandle(registrationRoute.route, "0.0.0.0", 8080)
   paraParser.startScheduler()
 }

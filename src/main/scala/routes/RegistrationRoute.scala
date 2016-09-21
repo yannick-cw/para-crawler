@@ -9,7 +9,7 @@ import parsing.models.User
 trait RegistrationRoute extends Protocols {
   val paraParser: ParaParser
 
-  val route: Route =
+  val route: Route = logRequestResult("reqRes") {
     path("register") {
       put {
         entity(as[User]) { user =>
@@ -18,4 +18,5 @@ trait RegistrationRoute extends Protocols {
         }
       }
     }
+  }
 }
