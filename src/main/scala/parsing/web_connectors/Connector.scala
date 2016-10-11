@@ -2,9 +2,8 @@ package parsing.web_connectors
 
 import parsing.models.ParseResult
 
-/**
-  * Created by Yannick on 18.09.16.
-  */
+import scala.concurrent.Future
+
 trait Connector {
-  def newResults: (List[ParseResult], Connector)
+  def newResults: Future[(List[ParseResult], Connector)]
 }
