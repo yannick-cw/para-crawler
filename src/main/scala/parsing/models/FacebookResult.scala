@@ -2,10 +2,15 @@ package parsing.models
 
 import org.joda.time.DateTime
 
-case class FacebookResult(created_time: String, message: String, permalink_url: String, picture: String) {
-  def toParseResult: ParseResult = ParseResult(permalink_url, new DateTime(created_time).getMillis, message, picture)
+case class FacebookResult(created_time: Option[String], message: Option[String], permalink_url: Option[String], picture: Option[String]) {
+  def toParseResult: Option[ParseResult] = for {
+    link <- permalink_url
+    created <- created_time
+    m <- message
+    p <- picture
+  } yield ParseResult(link, new DateTime(created).getMillis, m, p)
 }
 
 case class FacebookResults(data: List[FacebookResult]) {
-  def toParseResults: List[ParseResult] = data.map(_.toParseResult)
+  def toParseResults: List[ParseResult] = data.flatMap(_.toParseResult)
 }

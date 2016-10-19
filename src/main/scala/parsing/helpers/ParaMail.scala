@@ -2,9 +2,6 @@ package parsing.helpers
 
 import parsing.models.Result
 
-/**
-  * Created by Yannick on 18.09.16.
-  */
 object ParaMail {
   def sendMail(result: Result, mail: String, pwd: String): Unit = {
     Mail(

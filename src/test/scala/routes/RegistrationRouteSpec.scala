@@ -1,6 +1,6 @@
 package routes
 
-import akka.http.scaladsl.model.{ContentType, ContentTypes, HttpEntity, StatusCodes}
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity, StatusCodes}
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import org.scalatest.{Matchers, WordSpecLike}
 import parsing.ParaParser
