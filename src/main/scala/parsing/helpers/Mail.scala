@@ -8,8 +8,6 @@ case class Mail(from: String,
   def send(mail: String, pwd: String): String = {
     import org.apache.commons.mail._
 
-    println(mail)
-    println(pwd)
     val commonsMail: Email = new HtmlEmail().setHtmlMsg(richMessage).setTextMsg(message)
 
     commonsMail.addTo(to)
@@ -21,7 +19,6 @@ case class Mail(from: String,
     email.setSmtpPort(465)
     email.setAuthenticator(new DefaultAuthenticator(mail, pwd))
     email.setSSLOnConnect(true)
-    println("sending!!")
     email.send
   }
 }

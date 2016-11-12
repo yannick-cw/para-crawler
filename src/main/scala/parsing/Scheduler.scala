@@ -31,13 +31,17 @@ object Scheduler extends App with Requester with Protocols {
     val futUsers = get[List[User]](s"http://$crawlerHost:$crawlerPort/all-tags")
     val futureConnectors = Future.sequence(connectors.map(_.newResults))
 
-    for {
+    val finished = for {
       users <- futUsers
       conns <- futureConnectors
     } yield {
       conns.flatMap(_._1).toResult(users).foreach(ParaMail.sendMail(_, mail, pwd))
       connectors = conns.map(_._2)
     }
+    finished.onFailure { case e => e.printStackTrace }
+    finished.onSuccess { case _ => println("success") }
+
   }
+
   startScheduler()
 }
