@@ -3,41 +3,41 @@ package parsing
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import parsing.helpers.ParseResultsOps.ParseResultsImproved
-import parsing.helpers.{FacebookGroupRequester, ParaMail}
-import parsing.models.User
+import parsing.helpers.{ParaMail, Protocols, Requester}
+import parsing.models.{FacebookResults, User}
 import parsing.web_connectors.{Connector, DhvConnector, FacebookConnector}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration._
 
-class Scheduler(token: String, mail: String, pwd: String)
-  (implicit val system: ActorSystem, val materializer: ActorMaterializer)
-  extends ParaParser with FacebookGroupRequester {
+object Scheduler extends App with Requester with Protocols {
 
-  var users: Map[String, User] = Map.empty
+  implicit val system = ActorSystem()
+  implicit val materializer = ActorMaterializer()
+
+  val token = system.settings.config.getString("facebook.token")
+  val mail = system.settings.config.getString("email.mail")
+  val pwd = system.settings.config.getString("email.pwd")
+  val crawlerHost = system.settings.config.getString("crawler.host")
+  val crawlerPort = system.settings.config.getInt("crawler.port")
 
   var connectors: List[Connector] = List(
-    DhvConnector(baseId = 46445),
-    FacebookConnector(0, accessToken = token, request = request)
+    FacebookConnector(0, accessToken = token, request = get[FacebookResults]),
+    DhvConnector(baseId = 46445)
   )
 
-  def updateUser(user: User): Unit =
-    users = users.updated(user.email, user)
+  def startScheduler(): Unit = system.scheduler.schedule(1 second, 10 minutes) {
+    val futUsers = get[List[User]](s"http://$crawlerHost:$crawlerPort/all-tags")
+    val futureConnectors = Future.sequence(connectors.map(_.newResults))
 
-  def startScheduler(): Unit = system.scheduler.schedule(10 second, 10 minutes) {
-    Future.sequence(connectors.map { connector =>
-      connector.newResults.map { case (parseResults, newConnector) =>
-        parseResults.toResult(users.values.toList)
-          .foreach(ParaMail.sendMail(_, mail, pwd))
-        newConnector
-      }
-    }).foreach(nc => connectors = nc)
+    for {
+      users <- futUsers
+      conns <- futureConnectors
+    } yield {
+      conns.flatMap(_._1).toResult(users).foreach(ParaMail.sendMail(_, mail, pwd))
+      connectors = conns.map(_._2)
+    }
   }
-}
-
-object Scheduler {
-  def apply(token: String, mail: String, pwd: String)
-    (implicit system: ActorSystem, materializer: ActorMaterializer): Scheduler =
-    new Scheduler(token, mail, pwd)
+  startScheduler()
 }

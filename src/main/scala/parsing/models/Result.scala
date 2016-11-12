@@ -8,7 +8,7 @@ case class Result(user: User, parseResults: List[ParseResult]) {
     s"""
        |Hallo ${user.email}<br>
        |<br>
-       |Es scheint wieder neue Angebote für deine Suche nach: ${user.lookingFor.mkString(", ")}<br>
+       |Es scheint wieder neue Angebote für deine Suche nach: ${user.tags.mkString(", ")}<br>
        |zu geben. <br>
        |<br>
        |Check doch mal diese neuen Angebote<br>

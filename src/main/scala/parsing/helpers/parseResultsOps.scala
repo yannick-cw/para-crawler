@@ -12,7 +12,7 @@ object ParseResultsOps {
       users
         .map { user => Result(user,
           parseResults
-            .filter(_.contains(user.lookingFor))
+            .filter(_.contains(user.tags))
             .filter(_.notContains(List("suche"))))
         }
         .filter(_.parseResults.nonEmpty)

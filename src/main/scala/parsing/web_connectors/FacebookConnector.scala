@@ -14,7 +14,6 @@ case class FacebookConnector(baseId: Long,
 ) extends Connector {
 
   override def newResults: Future[(List[ParseResult], Connector)] = {
-    println(accessToken)
     val query = Query(Map(
       "access_token" -> accessToken,
       "limit" -> "100",
