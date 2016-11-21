@@ -9,7 +9,7 @@ object Config {
   val token = conf.getString("facebook.token")
   val mail = conf.getString("email.mail")
   val pwd = conf.getString("email.pwd")
-  val crawlerHost = conf.getString("crawler.host")
-  val crawlerPort = conf.getInt("crawler.port")
+  val tagsApiHost = conf.getString("tagsApi.host")
+  val tagsApiPort = conf.getInt("tagsApi.port")
   val unsubUrl = conf.getString("email.unsubUrl")
 }

@@ -23,7 +23,7 @@ object Scheduler extends App with Requester with Protocols {
   )
 
   def startScheduler(): Unit = system.scheduler.schedule(1 second, 10 minutes) {
-    val futUsers = get[List[User]](s"http://$crawlerHost:$crawlerPort/all-tags")
+    val futUsers = get[List[User]](s"http://$tagsApiHost:$tagsApiPort/all-tags")
     val futureConnectors = Future.sequence(connectors.map(_.newResults))
 
     val finished = for {
