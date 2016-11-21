@@ -10,17 +10,12 @@ import parsing.web_connectors.{Connector, DhvConnector, FacebookConnector}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration._
+import parsing.config.Config._
 
 object Scheduler extends App with Requester with Protocols {
 
   implicit val system = ActorSystem()
   implicit val materializer = ActorMaterializer()
-
-  val token = system.settings.config.getString("facebook.token")
-  val mail = system.settings.config.getString("email.mail")
-  val pwd = system.settings.config.getString("email.pwd")
-  val crawlerHost = system.settings.config.getString("crawler.host")
-  val crawlerPort = system.settings.config.getInt("crawler.port")
 
   var connectors: List[Connector] = List(
     FacebookConnector(0, accessToken = token, request = get[FacebookResults]),
