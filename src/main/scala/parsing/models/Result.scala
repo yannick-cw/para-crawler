@@ -24,6 +24,6 @@ case class Result(user: User, parseResults: List[ParseResult]) {
             |<img src="${result.imgSrc}" alt="img"/><br>
              """.stripMargin).mkString("<br> <br>") }
        |<br> <br>
-       |<a href='$url/unsubsribe/${user.email}'>Click here</> to unsubscribe.
+       |<a href='$url/unsubscribe/${user.email}'>Click here</> to unsubscribe.
         """.stripMargin
 }

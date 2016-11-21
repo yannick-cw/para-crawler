@@ -17,6 +17,7 @@ object Scheduler extends App with Requester with Protocols {
   implicit val system = ActorSystem()
   implicit val materializer = ActorMaterializer()
 
+  println(token)
   var connectors: List[Connector] = List(
     FacebookConnector(0, accessToken = token, request = get[FacebookResults]),
     DhvConnector(baseId = 46445)
