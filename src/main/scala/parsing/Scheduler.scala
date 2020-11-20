@@ -1,30 +1,30 @@
 package parsing
 
 import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
+import akka.stream.Materializer
+import parsing.config.Config._
 import parsing.helpers.ParseResultsOps.ParseResultsImproved
-import parsing.helpers.{ParaMail, Protocols, Requester}
-import parsing.models.{FacebookResults, User}
-import parsing.web_connectors.{Connector, DhvConnector, FacebookConnector}
+import parsing.helpers.{ParaMail, Requester}
+import parsing.models.User
+import parsing.web_connectors.{Connector, DhvConnector}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration._
-import parsing.config.Config._
+import scala.util.{Failure, Success}
 
-object Scheduler extends App with Requester with Protocols {
+object Scheduler extends App with Requester {
 
-  implicit val system = ActorSystem()
-  implicit val materializer = ActorMaterializer()
+  implicit val system                     = ActorSystem()
+  implicit val materializer: Materializer = Materializer(system)
 
-  println(token)
   var connectors: List[Connector] = List(
-    FacebookConnector(0, accessToken = token, request = get[FacebookResults]),
+//    FacebookConnector(0, accessToken = token, request = get[FacebookResults]),
     DhvConnector(baseId = 46445)
   )
 
-  def startScheduler(): Unit = system.scheduler.schedule(1 second, 10 minutes) {
-    val futUsers = get[List[User]](s"http://$tagsApiHost:$tagsApiPort/all-tags")
+  def startScheduler(): Unit = system.scheduler.schedule(1.second, 10.minutes) {
+    val futUsers         = Future.successful(List.empty[User])
     val futureConnectors = Future.sequence(connectors.map(_.newResults))
 
     val finished = for {
@@ -34,9 +34,10 @@ object Scheduler extends App with Requester with Protocols {
       conns.flatMap(_._1).toResult(users).foreach(ParaMail.sendMail(_, mail, pwd))
       connectors = conns.map(_._2)
     }
-    finished.onFailure { case e => e.printStackTrace }
-    finished.onSuccess { case _ => println("success") }
-
+    finished.onComplete {
+      case Failure(e) => e.printStackTrace()
+      case Success(_) => println("done")
+    }
   }
 
   startScheduler()

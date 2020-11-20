@@ -1,13 +1,14 @@
 name := "para-crawler"
-version := "0.12-SNAPSHOT"
-scalaVersion := "2.11.8"
-libraryDependencies += "org.scalatest"  %% "scalatest"   % "2.2.4" % Test
-libraryDependencies += "net.ruippeixotog" %% "scala-scraper" % "1.0.0"
-libraryDependencies += "com.typesafe.akka" % "akka-actor_2.11" % "2.4.9"
-libraryDependencies += "org.apache.commons" % "commons-email" % "1.4"
-libraryDependencies += "com.typesafe.akka" % "akka-http-spray-json-experimental_2.11" % "2.4.11"
-libraryDependencies += "com.typesafe.akka" % "akka-http-testkit_2.11" % "2.4.10"
-libraryDependencies += "org.scalatest" % "scalatest_2.11" % "3.0.0"
+version := "0.13"
+scalaVersion := "2.13.4"
+libraryDependencies += "org.scalatest"  %% "scalatest"   % "3.2.3" % Test
+libraryDependencies += "net.ruippeixotog" %% "scala-scraper" % "2.2.0"
+libraryDependencies += "com.typesafe.akka" %% "akka-http" % "10.2.1"
+libraryDependencies += "com.typesafe.akka" %% "akka-stream" % "2.6.8"
+libraryDependencies += "org.apache.commons" % "commons-email" % "1.5"
+libraryDependencies += "de.heikoseeberger" %% "akka-http-circe" % "1.35.2"
+libraryDependencies += "io.circe" %% "circe-generic" % "0.13.0"
+
 
 enablePlugins(JavaAppPackaging)
 enablePlugins(UniversalPlugin)

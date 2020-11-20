@@ -1,13 +1,9 @@
 package parsing.models
 
-import parsing.config.Config._
-
-
 /**
   * Created by Yannick on 18.09.16.
   */
 case class Result(user: User, parseResults: List[ParseResult]) {
-  val url = unsubUrl
   val renderedHtml =
     s"""
        |Hallo ${user.email}<br>
@@ -21,9 +17,8 @@ case class Result(user: User, parseResults: List[ParseResult]) {
         s"""Titel: ${result.title}<br>
             |Link: ${result.href}<br>
             |<br>
-            |<img src="${result.imgSrc}" alt="img"/><br>
+            |<img src="${result.imgSrc.getOrElse("")}" alt="img"/><br>
              """.stripMargin).mkString("<br> <br>") }
        |<br> <br>
-       |<a href='$url/unsubscribe/${user.email}'>Click here</> to unsubscribe.
         """.stripMargin
 }
